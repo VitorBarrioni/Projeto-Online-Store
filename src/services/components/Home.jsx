@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { getCategories, getProductsFromCategoryAndQuery } from '../api';
+import './Home.css';
 
 export default class Home extends Component {
   state = {
@@ -8,6 +9,7 @@ export default class Home extends Component {
     name: '',
     itens: [],
     click: false,
+    cart: [],
   };
 
   async componentDidMount() {
@@ -37,6 +39,25 @@ export default class Home extends Component {
     const categories = await getProductsFromCategoryAndQuery(id);
     this.setState({ itens: categories.results });
     // console.log(categories);
+  };
+
+  addCart = (target) => {
+    const product = {
+      name: target.title,
+      value: target.price,
+    };
+    this.setState(
+      (prevState) => ({
+        cart: [...prevState.cart, product],
+
+      }),
+      this.addLocalStorage(),
+    );
+  };
+
+  addLocalStorage = () => {
+    const { cart } = this.state;
+    localStorage.setItem('cart', JSON.stringify(cart));
   };
 
   render() {
@@ -83,10 +104,17 @@ export default class Home extends Component {
         </div>
         <section>
           {itens.map((ele) => (
-            <div key={ ele.id } data-testid="product">
+            <div key={ ele.id } data-testid="product" className="itens">
               <p>{ele.title}</p>
               <img src={ ele.thumbnail } alt={ ele.title } />
               <p>{ele.price}</p>
+              <button
+                type="button"
+                data-testid="product-add-to-cart"
+                onClick={ () => this.addCart(ele) }
+              >
+                Adicionar ao carrinho
+              </button>
             </div>
           ))}
           {click && 'Nenhum produto foi encontrado'}
