@@ -15,6 +15,8 @@ export default class Home extends Component {
   async componentDidMount() {
     const categoria = await getCategories();
     this.setState({ categorias: categoria });
+    const cartSaved = JSON.parse(localStorage.getItem('cart')) || [];
+    this.setState({ cart: cartSaved });
   }
 
   handleClick = async () => {
@@ -37,26 +39,39 @@ export default class Home extends Component {
   handleRadio = async ({ target }) => {
     const { id } = target;
     const categories = await getProductsFromCategoryAndQuery(id);
+    // const req = await fetch(`https://api.mercadolibre.com/sites/MLB/search?category=${id}`);
+    // const res = await req.json();
     this.setState({ itens: categories.results });
     // console.log(categories);
   };
 
   addCart = (target) => {
-    const product = {
-      name: target.title,
-      value: target.price,
-    };
-    this.setState(
-      (prevState) => ({
-        cart: [...prevState.cart, product],
-
-      }),
-      this.addLocalStorage(),
-    );
+    const { cart } = this.state;
+    const isTrue = cart.some((product) => product.name === target.title);
+    if (isTrue) {
+      const currProduct = cart.map((product) => {
+        if (product.name === target.title) {
+          product.quantity += 1;
+        }
+        return product;
+      });
+      this.addLocalStorage(currProduct);
+    } else {
+      const product = {
+        name: target.title,
+        value: target.price,
+        quantity: 1,
+      };
+      const cartToSave = [...cart, product];
+      this.addLocalStorage(cartToSave);
+      this.setState({
+        cart: cartToSave,
+      });
+    }
   };
 
-  addLocalStorage = () => {
-    const { cart } = this.state;
+  addLocalStorage = (cart) => {
+    // const { cart } = this.state;
     localStorage.setItem('cart', JSON.stringify(cart));
   };
 
