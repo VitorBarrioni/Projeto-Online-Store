@@ -7,7 +7,7 @@ export default class Cart extends Component {
 
   componentDidMount() {
     const cartSaved = JSON.parse(localStorage.getItem('cart'));
-    this.setState({ cart: cartSaved });
+    this.setState({ cart: cartSaved || [] });
   }
 
   render() {
