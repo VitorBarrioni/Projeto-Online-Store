@@ -32,6 +32,13 @@ export default class Home extends Component {
     });
   };
 
+  handleRadio = async ({ target }) => {
+    const { id } = target;
+    const categories = await getProductsFromCategoryAndQuery(id);
+    this.setState({ itens: categories.results });
+    // console.log(categories);
+  };
+
   render() {
     const { categorias, name, itens, click } = this.state;
     return (
@@ -59,12 +66,19 @@ export default class Home extends Component {
         </p>
         <div>
           {categorias.map((item) => (
-            <label htmlFor="name" key={ item.id } data-testid="category">
-              {item.name}
-              {' '}
-              <br />
-              <input key={ item.id } type="radio" value={ item.name } />
-            </label>
+            <p key={ item.id }>
+              <label htmlFor={ item.id } data-testid="category">
+                {' '}
+                <input
+                  id={ item.id }
+                  type="radio"
+                  value={ item.name }
+                  name="categoria"
+                  onChange={ this.handleRadio }
+                />
+                {item.name}
+              </label>
+            </p>
           ))}
         </div>
         <section>
