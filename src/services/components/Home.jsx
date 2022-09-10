@@ -123,6 +123,9 @@ export default class Home extends Component {
               <p>{ele.title}</p>
               <img src={ ele.thumbnail } alt={ ele.title } />
               <p>{ele.price}</p>
+              <Link data-testid="product-detail-link" to={ `/product/${ele.id}` }>
+                Saiba mais
+              </Link>
               <button
                 type="button"
                 data-testid="product-add-to-cart"
