@@ -2,14 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { getProductById } from '../api';
+import { addCart } from '../updateCart';
 
 class Product extends React.Component {
   state = {
     produto: {},
+    cart: [],
   };
 
   componentDidMount() {
     this.requisicao();
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    this.setState({ cart: savedCart });
   }
 
   requisicao = () => {
@@ -19,6 +23,12 @@ class Product extends React.Component {
     getProductById(id).then((response) => {
       this.setState({ produto: response });
     });
+  };
+
+  addProductToCart = () => {
+    const { cart, produto } = this.state;
+    const cartSaved = addCart(produto, cart);
+    this.setState({ cart: cartSaved });
   };
 
   render() {
@@ -43,6 +53,13 @@ class Product extends React.Component {
         <Link data-testid="shopping-cart-button" to="/cart">
           Carrinho
         </Link>
+        <button
+          type="button"
+          data-testid="product-detail-add-to-cart"
+          onClick={ this.addProductToCart }
+        >
+          Adicionar ao carrinho
+        </button>
       </div>
     );
   }

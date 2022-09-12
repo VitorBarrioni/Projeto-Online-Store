@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { addCart } from '../updateCart';
 import { getCategories, getProductsFromCategoryAndQuery } from '../api';
 import './Home.css';
 
@@ -45,34 +46,10 @@ export default class Home extends Component {
     // console.log(categories);
   };
 
-  addCart = (target) => {
+  addToCart = (item) => {
     const { cart } = this.state;
-    const isTrue = cart.some((product) => product.name === target.title);
-    if (isTrue) {
-      const currProduct = cart.map((product) => {
-        if (product.name === target.title) {
-          product.quantity += 1;
-        }
-        return product;
-      });
-      this.addLocalStorage(currProduct);
-    } else {
-      const product = {
-        name: target.title,
-        value: target.price,
-        quantity: 1,
-      };
-      const cartToSave = [...cart, product];
-      this.addLocalStorage(cartToSave);
-      this.setState({
-        cart: cartToSave,
-      });
-    }
-  };
-
-  addLocalStorage = (cart) => {
-    // const { cart } = this.state;
-    localStorage.setItem('cart', JSON.stringify(cart));
+    const cartSaved = addCart(item, cart);
+    this.setState({ cart: cartSaved });
   };
 
   render() {
@@ -129,7 +106,7 @@ export default class Home extends Component {
               <button
                 type="button"
                 data-testid="product-add-to-cart"
-                onClick={ () => this.addCart(ele) }
+                onClick={ () => this.addToCart(ele) }
               >
                 Adicionar ao carrinho
               </button>
